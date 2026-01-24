@@ -29,15 +29,14 @@ def analysis_substrate(layers, coor_range):
     x_min, x_max, y_min, y_max, z_min, z_max = coor_range
     layer_cnt = len(layers)
     y_interval = (y_max - y_min) / (layer_cnt - 1)
-    z_intervals = [(z_max - z_min) / (layers[i] - 1) if layers[i] > 1 else 0 for i in range(layer_cnt)]
 
     # prepare nodes indices and coordinates
     node_coors = {}
     input_indices = list(range(layers[0]))
-    input_coors = cal_coors(layers[0], x_min, x_max, y_min)
+    input_coors = cal_coors(layers[0], x_min, x_max, y_min, z_min, z_max)
 
     output_indices = list(range(layers[0], layers[0] + layers[-1]))
-    output_coors = cal_coors(layers[-1], x_min, x_max, y_max)
+    output_coors = cal_coors(layers[-1], x_min, x_max, y_max, z_min, z_max)
 
     if layer_cnt == 2:  # only input and output layers
         node_layers = [input_indices, output_indices]
@@ -49,7 +48,7 @@ def analysis_substrate(layers, coor_range):
         for layer_idx in range(1, layer_cnt - 1):
             y_coor = y_min + layer_idx * y_interval
             indices = list(range(hidden_idx, hidden_idx + layers[layer_idx]))
-            coors = cal_coors(layers[layer_idx], x_min, x_max, y_coor)
+            coors = cal_coors(layers[layer_idx], x_min, x_max, y_coor, z_min, z_max)
 
             hidden_layers.append(indices)
             hidden_indices.extend(indices)
@@ -88,8 +87,9 @@ def analysis_substrate(layers, coor_range):
     return query_coors, nodes, conns
 
 
-def cal_coors(neuron_cnt, x_min, x_max, y_coor):
+def cal_coors(neuron_cnt, x_min, x_max, y_coor, z_min, z_max):
     if neuron_cnt == 1:  # only one neuron in this layer
-        return [((x_min + x_max) / 2, y_coor)]
+        return [((x_min + x_max) / 2, y_coor, (z_min + z_max) / 2)]
     x_interval = (x_max - x_min) / (neuron_cnt - 1)
-    return [(x_min + x_interval * i, y_coor) for i in range(neuron_cnt)]
+    z_interval = (z_max - z_min) / (neuron_cnt - 1)
+    return [(x_min + x_interval * i, y_coor, z_min + z_interval * i) for i in range(neuron_cnt)]
