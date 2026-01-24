@@ -1,4 +1,4 @@
-# import RankNet
+import RankNet
 from tensorneat import algorithm, genome, common
 from tensorneat.pipeline import Pipeline
 from tensorneat.genome import BiasNode
