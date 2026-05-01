@@ -123,3 +123,11 @@ examples/func_fit/evolving_state.pkl
 src/evox/*
 .ai/
 experiment/
+
+#v env
+jax-venv/
+.venv/
+venv/
+env/
+bin/
+lib/
