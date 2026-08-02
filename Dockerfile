@@ -14,7 +14,8 @@ ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:${PATH}"
 
 # Create one stable virtual env in the image and install tooling once.
-RUN uv venv /opt/venv && \
+RUN uv python install 3.12 && \
+    uv venv --python 3.12 /opt/venv && \
     uv pip install --python /opt/venv/bin/python \
       "marimo==0.16.5" \
       "jax[cuda13]==0.7.2" \
