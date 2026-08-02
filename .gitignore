@@ -131,3 +131,4 @@ venv/
 env/
 bin/
 lib/
+lib64/
