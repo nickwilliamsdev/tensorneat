@@ -125,7 +125,7 @@ src/evox/*
 experiment/
 
 #v env
-jax-venv/
+jax-venv/*
 .venv/
 venv/
 env/
