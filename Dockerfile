@@ -26,6 +26,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest	/uv /uvx /bin/
 RUN mkdir /app
 WORKDIR /app
 
+ENV PATH="/app/.venv/bin:$PATH"
+
 RUN uv init --python 3.12 \
 && uv venv && uv pip install "jax[cuda13]==0.7.2" \
 && uv pip install "numpy==2.3.3" \
@@ -33,6 +35,5 @@ RUN uv init --python 3.12 \
 && uv pip install "opencv-python-headless==4.12.0.88" \
 && uv pip install "tqdm==4.67.1"
 
-COPY *.py *.mp4 /app
 
 CMD ["bash"]

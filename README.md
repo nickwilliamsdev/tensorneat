@@ -463,4 +463,5 @@ If you use TensorNEAT in your research and want to cite it in your work, please 
   keywords = {Neuroevolution, GPU Acceleration, Algorithm Library}
 }
 ```
-
+## Run with docker
+docker run --gpus all --rm -it   -e XLA_PYTHON_CLIENT_MEM_FRACTION=.40   --shm-size=1g   --ulimit memlock=-1   --ulimit stack=67108864   -p 8080:8080   -v "$PWD":/app   -w /app   jax-dev
