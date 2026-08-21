@@ -1,23 +1,4 @@
-#
-# SPDX-FileCopyrightText: Copyright (c) 1993-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-#
-# Author: William Benton <wbenton@nvidia.com> 
-
-
+# (Keep the comments and FROM at the top)
 FROM nvidia/cuda:13.0.1-runtime-ubuntu24.04
 
 RUN ldconfig
@@ -26,14 +7,21 @@ COPY --from=ghcr.io/astral-sh/uv:latest	/uv /uvx /bin/
 RUN mkdir /app
 WORKDIR /app
 
-ENV PATH="/app/.venv/bin:$PATH"
+# Point PATH to an environment OUTSIDE of /app
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONPATH="/app/src:$PYTHONPATH"
 
-RUN uv init --python 3.12 \
-&& uv venv && uv pip install "jax[cuda13]==0.7.2" \
-&& uv pip install "numpy==2.3.3" \
-&& uv pip install "plotly==6.3.0" \
-&& uv pip install "opencv-python-headless==4.12.0.88" \
-&& uv pip install "tqdm==4.67.1"
+# Copy pyproject.toml FIRST so we can install dependencies from it
+COPY pyproject.toml .
 
+# Create the venv and install everything listed in pyproject.toml, plus test tools
+RUN uv venv /opt/venv --python 3.12 \
+    && uv pip install --python /opt/venv/bin/python -e . \
+    && uv pip install --python /opt/venv/bin/python "jax[cuda13]==0.7.2" \
+    && uv pip install --python /opt/venv/bin/python "numpy==2.3.3" \
+    && uv pip install --python /opt/venv/bin/python "plotly==6.3.0" \
+    && uv pip install --python /opt/venv/bin/python "opencv-python-headless==4.12.0.88" \
+    && uv pip install --python /opt/venv/bin/python "tqdm==4.67.1" \
+    && uv pip install --python /opt/venv/bin/python "pytest"
 
 CMD ["bash"]
